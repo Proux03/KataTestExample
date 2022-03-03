@@ -1,34 +1,33 @@
 import java.util.*;
 
-import java.util.Scanner;
-
-
-public class Main {
+class Main {
     static Scanner scanner = new Scanner(System.in);
-    static int number1, number2;
-    static char operation;
+    static int num1;
+    static int num2;
+    static char oper;
     static int result;
 
     public static void main (String[] args) {
-        System.out.println("Введите выражение [2+2] или два римских числа от I до X:[V+V] + Enter ");
+        System.out.println("Введите выражение: ");
 //      Считываем строку userInput которую ввёл пользователь
         String userInput = scanner.nextLine();
+        userInput = userInput.replaceAll(" ", "");
 //      Создаём пустой символьный массив длиной 10 символов:  under_char
         char[] under_char = new char[10];
 //      Заполняем символьный массив символами строки которую ввел пользователь и по ходу ловим знак операции
         for (int i = 0; i < userInput.length(); i++) {
             under_char[i] = userInput.charAt(i);
             if (under_char[i] == '+') {
-                operation = '+';
+                oper = '+';
             }
             if (under_char[i] == '-') {
-                operation = '-';
+                oper = '-';
             }
             if (under_char[i] == '*') {
-                operation = '*';
+                oper = '*';
             }
             if (under_char[i] == '/') {
-                operation = '/';
+                oper = '/';
             }
         }
         String under_charString = String.valueOf(under_char);
@@ -36,31 +35,38 @@ public class Main {
         String stable00 = blacks[0];
         String stable01 = blacks[1];
         String string03 = stable01.trim();
-        number1 = romanToNumber(stable00);
-        number2 = romanToNumber(string03);
-        if (number1 < 0 && number2 < 0) {
-            result = 0;
-        } else {
-            result = calc(number1, number2, operation);
-            System.out.println("---Результат для римских цифр----");
-            String resultRoman = convertNumToRoman(result);
-            System.out.println(stable00 + " " + operation + " " + string03 + " = " + resultRoman);
+        num1 = romanToInt(stable00);
+        num2 = romanToInt(string03);
+        if (num1 < 0 || num2 < 0) result = 0;
+        else {
+            result = calc(num1, num2, oper);
+            String resultRoman = IntToRoman(result);
+            System.out.println(resultRoman);
+            System.exit(1);
         }
-        number1 = Integer.parseInt(stable00);
-        number2 = Integer.parseInt(string03);
-        result = calc(number1, number2, operation);
-        System.out.println("--Результат для арабских цифр----");
-        System.out.println(number1 + " " + operation + " " + number2 + " = " + result);
+
+        try {
+            num1 = Integer.parseInt(stable00);
+            num2 = Integer.parseInt(string03);
+            if (num1 < 11 && num2 < 11) {
+                result = calc(num1, num2, oper);
+                System.out.println(result);
+            } else System.out.println("Некорректный ввод");
+
+        } catch (NumberFormatException n){
+            System.out.println("Некорректный ввод");
+            System.exit(1);
+        }
     }
 
-    private static String convertNumToRoman (int numArabian) {
-        String[] roman = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+    private static String IntToRoman (int numArab) {
+        String[] roman = {"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
         };
-        String s = roman[numArabian];
+        String s = roman[numArab];
         return s;
     }
 
-    private static int romanToNumber (String roman) {
+    private static int romanToInt (String roman) {
         try {
             if (roman.equals("I")) {
                 return 1;
@@ -105,9 +111,8 @@ public class Main {
                 try {
                     result = num1 / num2;
                 } catch (ArithmeticException | InputMismatchException e) {
-                    System.out.println("Исключение : " + e);
-                    System.out.println("Only integer non-zero parameters allowed");
-
+                    //System.out.println("Исключение : " + e);
+                    System.out.println("На ноль делить нельзя!");
                     break;
                 }
                 break;
