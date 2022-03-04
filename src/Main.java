@@ -13,7 +13,7 @@ class Main {
         String userInput = scanner.nextLine();
         userInput = userInput.replaceAll(" ", "");
 //      Создаём пустой символьный массив длиной 10 символов:  under_char
-        char[] under_char = new char[10];
+        char[] under_char = new char[userInput.length()];
 //      Заполняем символьный массив символами строки которую ввел пользователь и по ходу ловим знак операции
         for (int i = 0; i < userInput.length(); i++) {
             under_char[i] = userInput.charAt(i);
@@ -30,14 +30,17 @@ class Main {
                 oper = '/';
             }
         }
-        String under_charString = String.valueOf(under_char);
-        String[] blacks = under_charString.split("[+-/*]");
-        String stable00 = blacks[0];
-        String stable01 = blacks[1];
-        String string03 = stable01.trim();
-        num1 = romanToInt(stable00);
-        num2 = romanToInt(string03);
-        if (num1 < 0 || num2 < 0) result = 0;
+        //String under_charString = String.valueOf(under_char);
+        String[] numbers = userInput.split("[+-/*]");
+        //String stable00 = blacks[0];
+        //String stable01 = blacks[1];
+        //String string03 = stable01.trim();
+        num1 = romanToInt(numbers[0]);
+        num2 = romanToInt(numbers[1]);
+        if (num1 <= 0 || num2 <= 0){
+            System.out.println("Некорректный ввод");
+            System.exit(1);
+        }
         else {
             result = calc(num1, num2, oper);
             String resultRoman = IntToRoman(result);
@@ -46,8 +49,8 @@ class Main {
         }
 
         try {
-            num1 = Integer.parseInt(stable00);
-            num2 = Integer.parseInt(string03);
+            num1 = Integer.parseInt(numbers[0]);
+            num2 = Integer.parseInt(numbers[1]);
             if (num1 < 11 && num2 < 11) {
                 result = calc(num1, num2, oper);
                 System.out.println(result);
