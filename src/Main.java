@@ -1,22 +1,24 @@
 import java.util.*;
 
 class Main {
-    static Scanner scanner = new Scanner(System.in);
-    static int num1;
-    static int num2;
-    static char oper;
-    static int result;
 
     public static void main(String[] args) {
-        System.out.println("Введите выражение: ");
-//      Считываем строку userInput которую ввёл пользователь
+        Scanner scanner = new Scanner(System.in);
+        //System.out.println("Введите выражение: ");
         String userInput = scanner.nextLine();
-        userInput = userInput.replaceAll(" ", "");
-//      Создаём пустой символьный массив длиной 10 символов:  under_char
-        char[] under_char = new char[userInput.length()];
-//      Заполняем символьный массив символами строки которую ввел пользователь и по ходу ловим знак операции
-        for (int i = 0; i < userInput.length(); i++) {
-            under_char[i] = userInput.charAt(i);
+        //System.out.println(calc(userInput));
+    }
+
+    public static String calc(String input) {
+        int num1 = 0;
+        int num2 = 0;
+        char oper = 0;
+        int result = 0;
+        input = input.replaceAll(" ", "");
+
+        char[] under_char = new char[input.length()];
+        for (int i = 0; i < input.length(); i++) {
+            under_char[i] = input.charAt(i);
             if (under_char[i] == '+') {
                 oper = '+';
             }
@@ -30,33 +32,54 @@ class Main {
                 oper = '/';
             }
         }
-        //String under_charString = String.valueOf(under_char);
-        String[] numbers = userInput.split("[+-/*]");
-        //String stable00 = blacks[0];
-        //String stable01 = blacks[1];
-        //String string03 = stable01.trim();
-        num1 = romanToInt(numbers[0]);
-        num2 = romanToInt(numbers[1]);
-        if (num1 < 0 || num2 < 0) {
-            result = 0;
-        } else {
-            result = calc(num1, num2, oper);
-            String resultRoman = IntToRoman(result);
-            System.out.println(resultRoman);
-            System.exit(1);
-        }
 
+        String[] roman = {"X", "IX", "VIII", "VII", "VI", "V", "IV", "III", "II", "I"};
+
+        boolean flag = false;
         try {
-            num1 = Integer.parseInt(numbers[0]);
-            num2 = Integer.parseInt(numbers[1]);
-            if (num1 < 11 && num2 < 11) {
-                result = calc(num1, num2, oper);
-                System.out.println(result);
-            } else System.out.println("Некорректный ввод");
+            String[] numbers = input.split("[+-/*]");
+            if (numbers.length > 2) throw new IllegalArgumentException("Неверный формат данных");
 
-        } catch (NumberFormatException n) {
-            System.out.println("Некорректный ввод");
-            System.exit(1);
+            for (int i = 0; i < roman.length; i++) {
+                if (roman[i].equals(numbers[0]) || roman[i].equals(numbers[1])) {
+                    flag = true;
+                }
+            }
+            if (flag) {
+                num1 = romanToInt(numbers[0]);
+                num2 = romanToInt(numbers[1]);
+            } else {
+                num1 = Integer.parseInt(numbers[0]);
+                num2 = Integer.parseInt(numbers[1]);
+            }
+            if ((num1 > 10 || num1 <= 0) || (num2 > 10 || num2 <= 0)) {
+                throw new IllegalArgumentException("Неверный формат данных");
+            }
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Неверный формат данных");
+        }
+        switch (oper) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                try {
+                    result = num1 / num2;
+                } catch (ArithmeticException | InputMismatchException e) {
+                    throw new ArithmeticException("Неверный формат данных");
+                }
+        }
+        if (flag) {
+            return IntToRoman(result);
+        }
+        else {
+            return Integer.toString(result);
         }
     }
 
@@ -69,8 +92,12 @@ class Main {
                 "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC",
                 "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"
         };
-        String s = roman[numArab];
-        return s;
+        try {
+            String s = roman[numArab];
+            return s;
+        } catch (ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("Неверный формат данных");
+        }
     }
 
     private static int romanToInt(String roman) {
@@ -100,32 +127,5 @@ class Main {
             throw new InputMismatchException("Неверный формат данных");
         }
         return -1;
-    }
-
-    public static int calc(int num1, int num2, char op) {
-        int result = 0;
-        switch (op) {
-            case '+':
-                result = num1 + num2;
-                break;
-            case '-':
-                result = num1 - num2;
-                break;
-            case '*':
-                result = num1 * num2;
-                break;
-            case '/':
-                try {
-                    result = num1 / num2;
-                } catch (ArithmeticException | InputMismatchException e) {
-                    //System.out.println("Исключение : " + e);
-                    System.out.println("На ноль делить нельзя!");
-                    break;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Не верный знак операции");
-        }
-        return result;
     }
 }
